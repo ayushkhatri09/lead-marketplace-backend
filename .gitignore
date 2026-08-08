@@ -1,0 +1,16 @@
+# Secrets
+Backend/.env
+.env
+.env.*
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Django generated files
+Backend/staticfiles/
+Backend/media/
+Backend/db.sqlite3
+Backend/sqlite_backup.json

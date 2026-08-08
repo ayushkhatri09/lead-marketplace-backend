@@ -1,0 +1,20 @@
+# Secrets
+Backend/.env
+Frontend/.env.local
+.env
+.env.*
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Django generated files
+Backend/staticfiles/
+Backend/media/
+Backend/db.sqlite3
+
+# Next.js
+Frontend/node_modules/
+Frontend/.next/
