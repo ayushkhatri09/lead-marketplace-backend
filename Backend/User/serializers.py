@@ -80,7 +80,40 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class LogoutSerializer(serializers.Serializer):
 
-    refresh = serializers.CharField()           
+    refresh = serializers.CharField() 
+
+
+
+class UserOnboardingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+
+        fields = [
+            "phone",
+            "address",
+            "latitude",
+            "longitude",
+        ]
+
+        extra_kwargs = {
+            "phone": {
+                "required": True
+            },
+            "address": {
+                "required": False,
+                "allow_blank": True,
+                "allow_null": True,
+            },
+            "latitude": {
+                "required": False,
+                "allow_null": True,
+            },
+            "longitude": {
+                "required": False,
+                "allow_null": True,
+            },
+        }              
 
 
 

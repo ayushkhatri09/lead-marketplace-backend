@@ -66,18 +66,25 @@ INSTALLED_APPS = [
     "Payment",
     "Notification",
     "corsheaders",
+    # Allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
+   
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -231,6 +238,30 @@ CORS_ALLOWED_ORIGINS = [
     ).split(",")
     if origin.strip()
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = False
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+    }
+}
+
+SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True

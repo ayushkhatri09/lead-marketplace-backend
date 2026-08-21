@@ -357,3 +357,68 @@ class NearbyProviderSerializer(
             )
 
         return None
+
+# =========================================================
+# PROVIDER GOOGLE ONBOARDING
+# =========================================================
+
+class ProviderOnboardingSerializer(serializers.ModelSerializer):
+
+    service = serializers.PrimaryKeyRelatedField(
+        queryset=Service.objects.filter(
+            is_active=True
+        )
+    )
+
+    class Meta:
+
+        model = Provider
+
+        fields = [
+            "phone",
+            "service",
+            "address",
+            "latitude",
+            "longitude",
+            "profile_image",
+            "aadhaar_front",
+            "aadhaar_back",
+            "pan_card",
+        ]
+
+        extra_kwargs = {
+
+            "profile_image": {
+                "required": False
+            },
+
+            "aadhaar_front": {
+                "required": False
+            },
+
+            "aadhaar_back": {
+                "required": False
+            },
+
+            "pan_card": {
+                "required": False
+            },
+
+        }
+
+    def update(self, instance, validated_data):
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+
+        # KYC docs mil gaye toh status update kar do
+        if (
+            validated_data.get("aadhaar_front")
+            or validated_data.get("aadhaar_back")
+            or validated_data.get("pan_card")
+        ):
+            instance.kyc_status = "under_review"
+
+        instance.save()
+
+        return instance    

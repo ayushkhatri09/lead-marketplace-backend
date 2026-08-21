@@ -61,32 +61,72 @@ class MyLeadAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
+# class ProviderLeadListAPIView(APIView):
+#     permission_classes=[IsProviderAuthenticated]
+#     authentication_classes = [ProviderJWTAuthentication]
+
+#     def get(self,request):
+
+#         provider=request.user
+
+#         leads=Lead.objects.filter(
+#             service=provider.service,
+#             status='pending'
+#         ).order_by('created_at')
+
+#         serializer=ProviderLeadListSerializer(
+#             leads,
+#             many=True
+#         )
+#         return Response(
+#             {
+#                 'message':"Available leads fetched successfully.",
+#                 "count": leads.count(),
+#                 "data": serializer.data,
+#             },
+#             status=status.HTTP_200_OK
+#         )
+
 class ProviderLeadListAPIView(APIView):
-    permission_classes=[IsProviderAuthenticated]
+
+    permission_classes = [IsProviderAuthenticated]
     authentication_classes = [ProviderJWTAuthentication]
 
-    def get(self,request):
+    def get(self, request):
 
-        provider=request.user
+        provider = request.user
 
-        leads=Lead.objects.filter(
+        # Provider offline है
+        if not provider.is_active:
+            return Response(
+                {
+                    "message": "You are currently offline.",
+                    "count": 0,
+                    "data": [],
+                },
+                status=status.HTTP_200_OK
+            )
+
+        # केवल उसी service की pending leads
+        leads = Lead.objects.filter(
             service=provider.service,
-            status='pending'
-        ).order_by('created_at')
+            status="pending"
+        ).order_by("created_at")
 
-        serializer=ProviderLeadListSerializer(
+        serializer = ProviderLeadListSerializer(
             leads,
             many=True
         )
+
         return Response(
             {
-                'message':"Available leads fetched successfully.",
+                "message": "Available leads fetched successfully.",
                 "count": leads.count(),
                 "data": serializer.data,
             },
             status=status.HTTP_200_OK
         )
-
+    
 class AcceptLeadAPIView(APIView):
 
     authentication_classes = [ProviderJWTAuthentication]
