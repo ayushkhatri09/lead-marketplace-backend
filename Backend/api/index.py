@@ -2,8 +2,8 @@ import os
 import sys
 from pathlib import Path
 
-# Project root (jahan manage.py hai) ko import path mein daalo
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 
