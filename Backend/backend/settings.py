@@ -40,11 +40,12 @@ RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-# ALLOWED_HOSTS = []
-ALLOWED_HOSTS = os.getenv(
-    "ALLOWED_HOSTS",
-    "localhost,127.0.0.1"
-).split(",")
+ALLOWED_HOSTS = [
+    h.strip()
+    for h in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if h.strip()
+]
+ALLOWED_HOSTS += [".vercel.app"]
 
 
 # Application definition
@@ -237,6 +238,10 @@ CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000"
     ).split(",")
     if origin.strip()
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://lead-marketplace-frontend-[a-z0-9-]+\.vercel\.app$",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
