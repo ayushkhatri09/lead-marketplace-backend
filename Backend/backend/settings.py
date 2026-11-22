@@ -122,8 +122,13 @@ DATABASES = {
         "PASSWORD": os.getenv("SUPABASE_DB_PASSWORD"),
         "HOST": os.getenv("SUPABASE_DB_HOST"),
         "PORT": os.getenv("SUPABASE_DB_PORT", "5432"),
+        # "OPTIONS": {
+        #     "sslmode": "require",
+        # },
+        "CONN_MAX_AGE": 0,
+        "DISABLE_SERVER_SIDE_CURSORS": True,
         "OPTIONS": {
-            "sslmode": "require",
+            "prepare_threshold": None,
         },
     }
 }
@@ -172,6 +177,16 @@ STORAGES = {
     },
 }
 
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         "rest_framework_simplejwt.authentication.JWTAuthentication",
+#         "Provider.authentication.ProviderJWTAuthentication",
+#     ),
+#     "DEFAULT_PERMISSION_CLASSES": (
+#         "rest_framework.permissions.IsAuthenticated",
+#     ),
+# }
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -180,8 +195,27 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
-}
 
+    # ---------------- Rate limiting (Redis cache me ginti hoti hai) ----------------
+    "DEFAULT_THROTTLE_CLASSES": (
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.ScopedRateThrottle",
+    ),
+    "DEFAULT_THROTTLE_RATES": {
+        # Normal limits (guest ya logged-in, sab APIs par)
+        "anon": "100/min",
+        "user": "30000/min",
+
+        # Sensitive endpoints (view par throttle_scope lagane se)
+        "login": "10000/min",
+        "register": "5/min",
+        "lead_create": "20/hour",
+
+        # Google OAuth
+        "google_auth": "10/min",
+    },
+}
 from datetime import timedelta
 
 SIMPLE_JWT = {
@@ -270,3 +304,21 @@ SOCIALACCOUNT_PROVIDERS = {
 SESSION_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
+
+REDIS_URL = os.getenv("REDIS_URL")
+
+if REDIS_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+            "KEY_PREFIX": "gharsetu",
+            "TIMEOUT": 300,
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }

@@ -1,24 +1,4 @@
-# import code
 
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from rest_framework import status
-# from rest_framework.permissions import AllowAny
-# from rest_framework.permissions import IsAuthenticated
-# from rest_framework_simplejwt.tokens import RefreshToken
-# from .models import User
-# from django.contrib.auth.hashers import check_password
-
-# from .serializers import UserRegisterSerializer,UserLoginSerializer,UserProfileSerializer,LogoutSerializer
-
-# import os
-
-# from django.conf import settings
-# from django.shortcuts import redirect
-
-# from google_auth_oauthlib.flow import Flow
-# from google.oauth2 import id_token
-# from google.auth.transport import requests as google_requests
 
 import secrets
 import os
@@ -53,6 +33,7 @@ from google.auth.transport import requests as google_requests
 
 class UserRegisterAPIView(APIView):
     permission_classes = [AllowAny]
+    throttle_scope = "register"
 
 
     def post(self, request):
@@ -83,6 +64,7 @@ class UserRegisterAPIView(APIView):
 class UserLoginAPIView(APIView):
 
     permission_classes = [AllowAny]
+    throttle_scope = "login"
 
 
     def post(self, request):
@@ -237,6 +219,7 @@ class UserLogoutAPIView(APIView):
 class GoogleLoginAPIView(APIView):
 
     permission_classes = [AllowAny]
+    throttle_scope = "google_auth"
 
     def get(self, request):
 
